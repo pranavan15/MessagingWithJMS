@@ -1,5 +1,5 @@
 package bookstore;
-//
+
 //import ballerina.log;
 //import ballerina.net.jms;
 //
@@ -21,10 +21,11 @@ package bookstore;
 //        log:printInfo("Message received from jms-producer");
 //        // Retrieve the string payload using native function
 //        string stringPayload = message.getTextMessageContent();
-//        sendSmsToPhone(stringPayload);
+//        println(stringPayload);
+//        //sendSmsToPhone(stringPayload);
 //    }
 //}
-//
+
 //// Function to handle SMS sending logic
 //function sendSmsToPhone (string number) {
 //    log:printInfo("Successfully sent SMS to: " + number);
