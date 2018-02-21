@@ -1,9 +1,8 @@
 package bookstore;
 
 import ballerina.log;
-import ballerina.math;
 import ballerina.net.http;
-import ballerina.net.jms;
+//import ballerina.net.jms;
 
 struct order {
     string customerName;
@@ -25,54 +24,62 @@ book[] inventory = [{bookId:1, bookName:"Tom Jones", authorName:"Henry Fielding"
                     {bookId:5, bookName:"Hamlet", authorName:"William Shakespeare"}];
 
 service<http> bookstoreService {
-    resource placeOrder (http:Request request, http:Response response) {
-        // Get the JSON payload from the user request
-        json reqPayload = request.getJsonPayload();
-        string source = reqPayload["Source"].toString();
-        string destination = reqPayload["Destination"].toString();
-        string vehicleType = reqPayload["Vehicle"].toString();
-        string phoneNumber = reqPayload["PhoneNumber"].toString();
-        // Send response to the user
-        json responseMessage = {"Message":"Order successful. You will get an SMS when a vehicle is available"};
-        response.setJsonPayload(responseMessage);
-        _ = response.send();
+    resource placeOrder (http:Connection httpConnection, http:InRequest request) {
+        http:OutResponse response = {};
+        json responseMessage = {};
+        order bookOrder;
+        TypeCastError intCastError;
 
-       \
-                addToJmsQueue(phoneNumber);
-                log:printInfo("Phone number added to the message queue");
-                break;
-            }
+        try {
+            // Get the JSON payload from the user request
+            json reqPayload = request.getJsonPayload();
+            bookOrder.customerName = reqPayload["Name"].toString();
+            bookOrder.address = reqPayload["Address"].toString();
+            bookOrder.contactNumber = reqPayload["contactNumber"].toString();
+            bookOrder.bookId, intCastError = (int)reqPayload["bookId"];
+        } catch (error err) {
+
         }
+
+        if (castError != null || bookOrder.bookId <= 0) {
+            response.statusCode = 400;
+            responseMessage = {"Message":"Bad request; field 'bookId' needs to be a positive integer value"};
+            _ = httpConnection.respond(response);
+            return;
+        }
+        println(bookOrder);
+        // Send response to the user
+        responseMessage = {"Message":"Your order is successfully placed. Ordered book will be delivered soon"};
+        response.setJsonPayload(responseMessage);
+        _ = httpConnection.respond(response);
+
+        //addToJmsQueue(phoneNumber);
+        log:printInfo("Phone number added to the message queue");
+
     }
 }
 
-// Function to handle availability checking logic
-function checkAvailability (string source, string destination, string vehicleType) (boolean) {
-    int availability = math:randomInRange(0, 2);
-    return (<boolean>availability);
-}
-
-// Function to add messages to the JMS queue
-function addToJmsQueue (string phoneNumber) {
-    endpoint<jms:JmsClient> jmsEP {
-        create jms:JmsClient(getConnectorConfig());
-    }
-    // Create an empty Ballerina message
-    jms:JMSMessage queueMessage = jms:createTextMessage(getConnectorConfig());
-    // Set a string payload to the message
-    queueMessage.setTextMessageContent(phoneNumber);
-    // Send the message to the JMS provider
-    jmsEP.send("messageQueue", queueMessage);
-}
-
-function getConnectorConfig () (jms:ClientProperties) {
-    // Here connection properties are defined as a map. 'providerUrl' or 'configFilePath' and the
-    // 'initialContextFactory' vary according to the JMS provider you use
-    // In this example WSO2 MB server has been used as the message broker
-    jms:ClientProperties properties = {initialContextFactory:"wso2mbInitialContextFactory",
-                                          configFilePath:"/home/pranavan/IdeaProjects/Ballerina-samples/" +
-                                                         "MessagingWithJMS/resources/jndi.properties",
-                                          connectionFactoryName:"QueueConnectionFactory",
-                                          connectionFactoryType:"queue"};
-    return properties;
-}
+//// Function to add messages to the JMS queue
+//function addToJmsQueue (string phoneNumber) {
+//    endpoint<jms:JmsClient> jmsEP {
+//        create jms:JmsClient(getConnectorConfig());
+//    }
+//    // Create an empty Ballerina message
+//    jms:JMSMessage queueMessage = jms:createTextMessage(getConnectorConfig());
+//    // Set a string payload to the message
+//    queueMessage.setTextMessageContent(phoneNumber);
+//    // Send the message to the JMS provider
+//    jmsEP.send("messageQueue", queueMessage);
+//}
+//
+//function getConnectorConfig () (jms:ClientProperties) {
+//    // Here connection properties are defined as a map. 'providerUrl' or 'configFilePath' and the
+//    // 'initialContextFactory' vary according to the JMS provider you use
+//    // In this example WSO2 MB server has been used as the message broker
+//    jms:ClientProperties properties = {initialContextFactory:"wso2mbInitialContextFactory",
+//                                          configFilePath:"/home/pranavan/IdeaProjects/Ballerina-samples/" +
+//                                                         "MessagingWithJMS/resources/jndi.properties",
+//                                          connectionFactoryName:"QueueConnectionFactory",
+//                                          connectionFactoryType:"queue"};
+//    return properties;
+//}
