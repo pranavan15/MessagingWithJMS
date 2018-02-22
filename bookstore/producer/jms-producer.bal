@@ -87,6 +87,7 @@ service<http> bookstoreService {
 function addToJmsQueue (order bookOrder) (error jmsError) {
     endpoint<jms:JmsClient> jmsEP {
     }
+
     // Try obtaining JMS client and add the order to the JMS queue
     try {
         jms:JmsClient jmsClient = create jms:JmsClient(getConnectorConfig());
@@ -103,6 +104,7 @@ function addToJmsQueue (order bookOrder) (error jmsError) {
         // If obtaining JMS client fails, catch and return the error message
         jmsError = err;
     }
+
     return;
 }
 
