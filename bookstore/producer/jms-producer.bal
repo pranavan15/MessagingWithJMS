@@ -19,6 +19,7 @@ json[] bookInventory = ["Tom Jones", "The Rainbow", "Lolita", "Atonement", "Haml
 @http:configuration {basePath:"/bookStore"}
 service<http> bookstoreService {
     // Resource that allows users to place an order for a book
+    @http:resourceConfig {methods:["POST"]}
     resource placeOrder (http:Connection httpConnection, http:InRequest request) {
         http:OutResponse response = {};
         order bookOrder = {};
@@ -75,6 +76,7 @@ service<http> bookstoreService {
     }
 
     // Resource that allows users to get a list of all the available books
+    @http:resourceConfig {methods:["GET"]}
     resource getAvailableBooks (http:Connection httpConnection, http:InRequest request) {
         http:OutResponse response = {};
         // Send json array 'bookInventory' as the response, which contains all the available books
