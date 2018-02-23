@@ -1,4 +1,4 @@
-package bookstore.consumer;
+package bookstore.jmsConsumer;
 
 import ballerina.log;
 import ballerina.net.jms;
