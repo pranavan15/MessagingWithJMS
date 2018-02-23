@@ -19,7 +19,7 @@ function testGetConnectorConfig () {
 //  Unit test for testing addToJmsQueue() function
 function testAddToJmsQueue () {
     // Construct a new message
-   string message = "Test JMS Message";
+    string message = "Test JMS Message";
     // Add the message to the JMS queue 'TestQueue'
     error jmsError = addToJmsQueue("TestQueue", message);
     // 'jmsError' is expected to be null
