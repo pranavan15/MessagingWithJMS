@@ -4,7 +4,7 @@ import ballerina.net.jms;
 import ballerina.log;
 
 // Function to add messages to the JMS queue
-public function addToJmsQueue (order bookOrder) (error jmsError) {
+public function addToJmsQueue (string queueName, string message) (error jmsError) {
     endpoint<jms:JmsClient> jmsEP {
     }
 
@@ -14,11 +14,10 @@ public function addToJmsQueue (order bookOrder) (error jmsError) {
         bind jmsClient with jmsEP;
         // Create an empty Ballerina message
         jms:JMSMessage queueMessage = jms:createTextMessage(getConnectorConfig());
-        var bookOrderDetails, _ = <json>bookOrder;
         // Set a string payload to the message
-        queueMessage.setTextMessageContent(bookOrderDetails.toString());
+        queueMessage.setTextMessageContent(message);
         // Send the message to the JMS provider
-        jmsEP.send("OrderQueue", queueMessage);
+        jmsEP.send(queueName, queueMessage);
     } catch (error err) {
         log:printError(err.msg);
         // If obtaining JMS client fails, catch and return the error message

@@ -50,9 +50,10 @@ service<http> bookstoreService {
         }
 
         json responseMessage;
-        // If requested book is available then try adding the order to the JMS queue
+        // If requested book is available then try adding the order to the JMS queue 'OrderQueue'
         if (isBookAvailable) {
-            error jmsError = jmsUtil:addToJmsQueue(bookOrder);
+            var bookOrderDetails, _ = <json>bookOrder;
+            error jmsError = jmsUtil:addToJmsQueue("OrderQueue", bookOrderDetails.toString());
             // If adding order to the JMS queue fails, send an "Internal Server Error" message as the response
             if (jmsError != null) {
                 response.statusCode = 500;

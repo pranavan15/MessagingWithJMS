@@ -1,4 +1,4 @@
-package bookstore.jmsProducer;
+package bookstore.jmsProducer.jmsUtil;
 
 import ballerina.test;
 import ballerina.net.jms;
@@ -18,11 +18,10 @@ function testGetConnectorConfig () {
 
 //  Unit test for testing addToJmsQueue() function
 function testAddToJmsQueue () {
-    // Construct a new order
-    order bookOrder = {customerName:"TestUser", address:"20, Palm Grove, Colombo, Sri Lanka",
-                          contactNumber:"+94777123456", orderedBookName:"Hamlet"};
-    // Add the order to the JMS queue
-    error jmsError = addToJmsQueue(bookOrder);
+    // Construct a new message
+   string message = "Test JMS Message";
+    // Add the message to the JMS queue 'TestQueue'
+    error jmsError = addToJmsQueue("TestQueue", message);
     // 'jmsError' is expected to be null
-    test:assertTrue(jmsError == null, "Cannot add order to JMS queue! Error Msg: " + jmsError.msg);
+    test:assertTrue(jmsError == null, "Cannot add new message to the JMS queue specified! Error Msg: " + jmsError.msg);
 }
